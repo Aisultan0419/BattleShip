@@ -162,26 +162,28 @@ function AppContent() {
   };
 
   const createRoom = async (gridSz, maxShipSz) => {
-    if (connection) {
-      try {
-        setConfig(generateGameConfig(gridSz, maxShipSz));
-        const id = await connection.invoke('CreateRoom', gridSz, maxShipSz);
-        setRoomId(id);
-        setGameData(prev => ({ ...prev, state: 'WaitingForPlayer' }));
-        playSfx('click');
-      } catch (err) { toast.error("Failed to create room"); }
-    }
+      if (connection) {
+          try {
+              const correctedConfig = generateGameConfig(gridSz, maxShipSz); 
+              setConfig(correctedConfig);
+              const id = await connection.invoke('CreateRoom', correctedConfig.gridSize, correctedConfig.maxShipSize);
+              setRoomId(id);
+              setGameData(prev => ({ ...prev, state: 'WaitingForPlayer' }));
+              playSfx('click');
+          } catch (err) { toast.error("Failed to create room"); }
+      }
   };
 
   const joinRoom = async (id, gridSz, maxShipSz) => {
-    if (connection && id) {
-      try {
-        setConfig(generateGameConfig(gridSz, maxShipSz));
-        await connection.invoke('JoinRoom', id);
-        setRoomId(id);
-        playSfx('click');
-      } catch (err) { toast.error(err.message || "Failed to join room"); }
-    }
+      if (connection && id) {
+          try {
+              const correctedConfig = generateGameConfig(gridSz, maxShipSz);
+              setConfig(correctedConfig);
+              await connection.invoke('JoinRoom', id);
+              setRoomId(id);
+              playSfx('click');
+          } catch (err) { toast.error(err.message || "Failed to join room"); }
+      }
   };
 
   const handleSetSail = async (shipCoordinates) => {

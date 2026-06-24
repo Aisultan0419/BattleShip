@@ -1,0 +1,6 @@
+@ShipBattle_HostAddress = http://localhost:5107
+
+GET {{ShipBattle_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -8,8 +8,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
+var rawConnectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
+static string ConvertDatabaseUrl(string url)
+{
+    if (!url.StartsWith("postgresql://") && !url.StartsWith("postgres://"))
+        return url;
+
+    var uri = new Uri(url);
+    var userInfo = uri.UserInfo.Split(':');
+    var user = userInfo[0];
+    var password = userInfo.Length > 1 ? userInfo[1] : "";
+    var host = uri.Host;
+    var port = uri.Port > 0 ? uri.Port : 5432;
+    var database = uri.AbsolutePath.TrimStart('/');
+
+    return $"Host={host};Port={port};Database={database};Username={user};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+}
+
+var connectionString = ConvertDatabaseUrl(rawConnectionString!);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));

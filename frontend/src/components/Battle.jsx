@@ -84,14 +84,12 @@ export default function Battle({ connection, roomId, user, gameData, myFleetCell
                 }
              });
           });
-          toast.success("ENEMY SHIP DESTROYED!", { icon: '💥' });
           return next;
         });
       } else {
         setMyBoard(prev => {
           const next = prev.map(row => [...row]);
           coords.forEach(([x, y]) => { next[x][y] = 4; });
-          toast.error("YOUR SHIP WAS SUNK!", { icon: '🚨' });
           return next;
         });
       }
@@ -101,7 +99,7 @@ export default function Battle({ connection, roomId, user, gameData, myFleetCell
   const handleShot = (x, y) => {
     if (!isMyTurn || isGameOver) return;
     if (enemyBoard[x][y] !== 0) return;
-    connection.invoke('MakeShot', roomId, x, y).catch(e => toast.error("Shot failed!"));
+    connection.invoke('MakeShot', roomId, x, y);
   };
 
   const renderCellContent = (cellState) => {

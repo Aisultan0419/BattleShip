@@ -155,7 +155,6 @@ function AppContent() {
     try {
       await newConnection.start();
       setConnection(newConnection);
-      toast.success("Connected to HQ");
     } catch (e) {
       toast.error("Failed to connect to game server");
     }
